@@ -1,7 +1,7 @@
-'use client';
-import { Avatar, Link, Grid, Box, Typography, Container } from '@mui/material';
-import { Button, TextField, FormControlLabel, Checkbox } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+'use client'
+import { Avatar, Link, Grid, Box, Typography, Container } from '@mui/material'
+import { Button, TextField, FormControlLabel, Checkbox } from '@mui/material'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 
 export default function SignIn() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
