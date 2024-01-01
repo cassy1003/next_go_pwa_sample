@@ -5,16 +5,16 @@ FROM golang:latest
 WORKDIR /app
 
 # ローカルのソースコードをコンテナにコピー
-COPY . .
+COPY . /app
 
 # 必要なパッケージをインストール
-RUN go mod download
+RUN go mod download && go mod tidy
 
 # アプリケーションをビルド
-RUN go build -o main .
+RUN go get github.com/cosmtrek/air && go build -o /go/bin/air github.com/cosmtrek/air
 
 # コンテナのポートを公開
 EXPOSE 8080
 
 # アプリケーションを実行
-CMD ["go", "run", "main.go"]
+CMD ["air", "-c", ".air.toml"]
