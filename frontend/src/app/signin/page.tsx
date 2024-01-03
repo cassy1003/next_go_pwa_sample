@@ -2,15 +2,35 @@
 import { Avatar, Link, Grid, Box, Typography, Container } from '@mui/material'
 import { Button, TextField, FormControlLabel, Checkbox } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import { setCookie, getCookie } from 'cookies-next'
 
-export default function SignIn() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+export default async function SignIn() {
+  const token = getCookie('token')
+  if (token) {
+    console.log(token)
+    const r = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/api/users/role', {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json"
+      }
+    })
+    const r2 = await r.json()
+    console.log(r2)
+  } else {
+    console.log("Don't have token")
+  }
+
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/api/login', {
+      method: "POST",
+      body: new FormData(event.currentTarget)
+    })
+    const d = await res.json()
+    setCookie('token', d.token, {expires: new Date(d.expire)})
   };
 
   return (

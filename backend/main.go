@@ -1,20 +1,9 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"app/pkg/router"
 )
 
 func main() {
-  //Ginフレームワークのデフォルトの設定を使用してルータを作成
-  router := gin.Default()
-
-  // ルートハンドラの定義
-  router.GET("/", func(c *gin.Context) {
-    c.JSON(200, gin.H{
-      "message": "Hello, World!",
-    })
-  })
-
-  // サーバー起動
-  router.Run(":8080")
+	router.Init()
 }
