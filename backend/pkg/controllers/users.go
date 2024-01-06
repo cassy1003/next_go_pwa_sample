@@ -9,8 +9,8 @@ import (
 type UsersController struct{}
 
 func (ct UsersController) Role(c *gin.Context) {
-	userID, _ := c.Get("UserID")
+	user, _ := c.Get("User")
 	c.JSON(http.StatusOK, gin.H{
-		"userID": userID,
+		"user": user,
 	})
 }

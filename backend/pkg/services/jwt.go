@@ -1,23 +1,19 @@
 package services
 
 import (
+	"app/pkg/models"
+	"strings"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 )
 
-func UserIdInJwt(c *gin.Context) string {
-	claims := jwt.ExtractClaims(c)
-	userID := claims[jwt.IdentityKey]
-	return userID.(string)
-}
-
 func NewJwt() (*jwt.GinJWTMiddleware, error) {
 	jwtMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:      "test zone",
 		Key:        []byte("secret key"),
-		Timeout:    time.Hour * 1,
+		Timeout:    time.Hour * 24,
 		MaxRefresh: time.Hour * 24 * 7,
 		SendCookie: false,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
@@ -26,17 +22,27 @@ func NewJwt() (*jwt.GinJWTMiddleware, error) {
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
-			var l loginRequest
+			var l models.LoginRequest
 
 			if err := c.ShouldBind(&l); err != nil {
 				return "", jwt.ErrMissingLoginValues
 			}
 
-			if !l.isValid() {
+			user, err := models.FindDummyUser(l)
+			if err != nil {
 				return "", jwt.ErrFailedAuthentication
 			}
 
-			return l.Email, nil
+			return user, nil
+		},
+		Authorizator: func(data interface{}, c *gin.Context) bool {
+			pathType := "general"
+			if strings.HasPrefix(c.Request.URL.Path, "/api/admin") {
+				pathType = "admin"
+			}
+
+			user, ok := data.(map[string]interface{})
+			return ok && user["Type"] == pathType
 		},
 	})
 
@@ -53,17 +59,8 @@ func NewJwt() (*jwt.GinJWTMiddleware, error) {
 	return jwtMiddleware, nil
 }
 
-type loginRequest struct {
-	Email    string `form:"email" json:"email" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-}
-
-func (l loginRequest) isValid() bool {
-	// TODO : 一般的にはデータベースやストレージ、SaaSから取得する
-	passwords := map[string]string{
-		"admin@gmail.com": "admin",
-		"test@gmail.com":  "test",
-	}
-
-	return passwords[l.Email] == l.Password
+func UserInJwt(c *gin.Context) interface{} {
+	claims := jwt.ExtractClaims(c)
+	user := claims[jwt.IdentityKey]
+	return user
 }

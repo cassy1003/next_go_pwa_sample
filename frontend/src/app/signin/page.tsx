@@ -74,6 +74,7 @@ export default async function SignIn() {
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
+          <input type="hidden" name="type" value="general" />
           <Button
             type="submit"
             fullWidth

@@ -2,6 +2,7 @@ package router
 
 import (
 	"app/pkg/controllers"
+	"app/pkg/middleware"
 	"app/pkg/services"
 	"log"
 
@@ -11,12 +12,17 @@ import (
 )
 
 func Init() {
-
-	//Ginフレームワークのデフォルトの設定を使用してルータを作成
 	router := gin.Default()
 
 	// CORS設定
-	router.Use(setCORS)
+	router.Use(middleware.SetCORS)
+
+	// 認証設定
+	jwtMiddleware, err := services.NewJwt()
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
@@ -25,20 +31,14 @@ func Init() {
 	api := router.Group("/api")
 	{
 		authCtl := controllers.AuthController{}
+
+		// 認証が不要なエンドポイント
 		api.POST("/login", authCtl.Login)
 		api.GET("/refresh_token", authCtl.RefreshToken)
 
-		jwtMiddleware, err := services.NewJwt()
-
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
-
+		// 認証が必要なエンドポイント
 		api.Use(jwtMiddleware.MiddlewareFunc())
-		api.Use(func(c *gin.Context) {
-			c.Set("UserID", services.UserIdInJwt(c))
-		})
+		api.Use(middleware.SetUser)
 		users := api.Group("/users")
 		{
 			usersCtl := controllers.UsersController{}
@@ -48,19 +48,4 @@ func Init() {
 
 	// サーバー起動
 	router.Run(":8080")
-}
-
-func setCORS(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	c.Writer.Header().Set("Access-Control-Max-Age", "86400")
-	c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
-	c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-
-	if c.Request.Method == "OPTIONS" {
-		c.AbortWithStatus(204)
-		return
-	}
-
-	c.Next()
 }
