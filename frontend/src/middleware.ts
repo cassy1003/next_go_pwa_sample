@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCookie } from 'cookies-next'
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')

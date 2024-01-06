@@ -11,9 +11,10 @@ import (
 
 func NewJwt() (*jwt.GinJWTMiddleware, error) {
 	jwtMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
-		Realm:      "test zone",
-		Key:        []byte("secret key"),
-		Timeout:    time.Hour * 24,
+		Realm:   "test zone",
+		Key:     []byte("secret key"),
+		Timeout: time.Hour * 24,
+		//Timeout:    time.Minute * 10,
 		MaxRefresh: time.Hour * 24 * 7,
 		SendCookie: false,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
