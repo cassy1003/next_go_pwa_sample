@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, KeyboardEvent, MouseEvent } from 'react'
 
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
@@ -24,7 +24,7 @@ export default function SideNavi() {
 
   const toggleDrawer = 
     (open: boolean) => 
-    (e) => setState(open)
+    () => setState(open)
 
   return (
     <>

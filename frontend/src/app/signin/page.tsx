@@ -4,12 +4,16 @@ import { Button, TextField, FormControlLabel, Checkbox } from '@mui/material'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import { setCookie } from 'cookies-next'
 import { useRouter } from 'next/navigation'
+import { API_DOMAIN } from '@/lib/env'
 
 export default async function SignIn() {
   const router = useRouter()
+  const apiDomain = API_DOMAIN ?? 'http://' + location.hostname + ':8080'
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const res = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/api/login', {
+
+    const res = await fetch(apiDomain + '/api/login', {
       method: 'POST',
       body: new FormData(event.currentTarget)
     })
@@ -79,7 +83,7 @@ export default async function SignIn() {
             </Grid>
             <Grid item>
               <Link href='#' variant='body2'>
-                Don't have an account? Sign Up
+                Don&apos t have an account? Sign Up
               </Link>
             </Grid>
           </Grid>

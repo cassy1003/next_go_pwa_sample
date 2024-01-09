@@ -10,6 +10,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import SideNavi from '@/components/layouts/SideNavi'
 import BottomNavi from '@/components/layouts/BottomNavi'
 
+import Notification from './_notification/page'
+
 export default function GeneralLayout({
   children,
 }: {
@@ -42,6 +44,8 @@ export default function GeneralLayout({
       <ThemeProvider theme={theme}>
         <BottomNavi />
       </ThemeProvider>
+
+      <Notification />
     </Box>
   )
 }
