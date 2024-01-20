@@ -7,4 +7,4 @@ export const FIREBASE_APP_ID = process.env['NEXT_PUBLIC_FIREBASE_APP_ID'] ?? ''
 export const FIREBASE_MEASUREMENT_ID = process.env['NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID'] ?? '' 
 export const FIREBASE_WEB_PUSH_VAPID_KEY = process.env['NEXT_PUBLIC_FIREBASE_WEB_PUSH_VAPID_KEY'] ?? ''
 
-export const API_DOMAIN = process.env['NEXT_PUBLIC_API_BASE_URL'] ?? ''
+export const API_DOMAIN = process.env['NEXT_PUBLIC_API_BASE_URL'] ?? null

@@ -11,6 +11,7 @@ COPY package.json package-lock.json ./
 COPY . .
 
 # 依存関係をインストール
+RUN npm cache clean --force
 RUN npm install
 
 # アプリケーションをビルド

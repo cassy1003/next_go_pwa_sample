@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getMessaging, getToken, onMessage, Messaging, MessagePayload } from 'firebase/messaging'
+import { getCookie } from 'cookies-next'
+import { API_DOMAIN } from '@/lib/env'
 
 import {
   FIREBASE_API_KEY,
@@ -36,6 +38,18 @@ export const requestForToken = (messaging: Messaging) => {
       if (currentToken) {
         // トークンの取得に成功した場合の処理
         console.log('Current token:', currentToken)
+
+        const apiDomain = API_DOMAIN ?? 'http://' + location.hostname + ':8080'
+        const token = getCookie('token')
+
+        const res = fetch(apiDomain + '/api/users/notice_token', {
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          },
+          method: 'POST',
+          body: JSON.stringify({token: currentToken}) //new FormData({token: currentToken})
+        })
       } else {
         // トークンの取得に失敗した場合の処理
         console.log('No registration token available.')

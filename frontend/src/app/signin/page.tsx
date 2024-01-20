@@ -8,11 +8,11 @@ import { API_DOMAIN } from '@/lib/env'
 
 export default async function SignIn() {
   const router = useRouter()
-  const apiDomain = API_DOMAIN ?? 'http://' + location.hostname + ':8080'
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
+    const apiDomain = API_DOMAIN ?? 'http://' + location.hostname + ':8080'
     const res = await fetch(apiDomain + '/api/login', {
       method: 'POST',
       body: new FormData(event.currentTarget)

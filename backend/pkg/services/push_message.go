@@ -1,7 +1,8 @@
-package main
+package services
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	firebase "firebase.google.com/go"
@@ -9,7 +10,14 @@ import (
 	"google.golang.org/api/option"
 )
 
-func main() {
+type Message struct {
+	Topic string
+	Title string
+	Body  string
+	Tag   string
+}
+
+func PushMessage(token string, msg Message) {
 	ctx := context.Background()
 	// Firebase初期化
 	client, err := firebaseInit(ctx)
@@ -17,7 +25,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	message := createMessage("test", "テスト送信", "これはテスト送信です。", "test1")
+	message := createMessage(token, msg)
 
 	// Send a message to the devices subscribed to the provided topic.
 	response, err := client.Send(ctx, message)
@@ -28,7 +36,7 @@ func main() {
 	log.Println("Successfully sent message:", response)
 }
 
-func createMessage(topic string, title string, body string, tag string) *messaging.Message {
+func createMessage(token string, msg Message) *messaging.Message {
 	/*
 		// android用の設定初期化
 		android := new(messaging.AndroidConfig)
@@ -45,15 +53,15 @@ func createMessage(topic string, title string, body string, tag string) *messagi
 	// 大本の通知設定の初期化
 	notification := new(messaging.Notification)
 	// タイトル
-	notification.Title = title + "!"
+	notification.Title = msg.Title + "!"
 	// 本文
-	notification.Body = body + "!"
+	notification.Body = msg.Body + "!"
 	// メッセージ構造体の初期化
 	message := &messaging.Message{
 		// データの設定(通知を出す前にデータだけ受け取りたいときはこっちに設定する)
 		Data: map[string]string{
-			"title": title,
-			"body":  body,
+			"title": msg.Title,
+			"body":  msg.Body,
 		},
 		// Android用の設定
 		//Android: android,
@@ -61,7 +69,8 @@ func createMessage(topic string, title string, body string, tag string) *messagi
 		Notification: notification,
 		// 配信先(トピック)
 		//Topic: topic,
-		Token: "ckulxlSCUrtky5kc5X0ebl:APA91bHDUmzDAh8WC4HR0O8aGwCgRQsN9CWz0-m4ZDKMSayfrlF3tSXS5lcKls7Wn0kxrIw9aS5ExJ4ioFtIwDcBl33QxJk0RqoyfToD-7Hw5yAZT0p1KB_fDCE6RrLcYMGbaAEqfVn5",
+		//Token: "ckulxlSCUrtky5kc5X0ebl:APA91bHDUmzDAh8WC4HR0O8aGwCgRQsN9CWz0-m4ZDKMSayfrlF3tSXS5lcKls7Wn0kxrIw9aS5ExJ4ioFtIwDcBl33QxJk0RqoyfToD-7Hw5yAZT0p1KB_fDCE6RrLcYMGbaAEqfVn5",
+		Token: token,
 	}
 	return message
 }
@@ -69,9 +78,10 @@ func createMessage(topic string, title string, body string, tag string) *messagi
 // firebaseInit Firebaseの初期化
 func firebaseInit(ctx context.Context) (*messaging.Client, error) {
 	// Use a service account
-	opt := option.WithCredentialsFile("./service_account_key.json")
+	opt := option.WithCredentialsFile("pkg/services/fcm_account_key.json")
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
+		fmt.Println(err)
 		log.Fatalln(err)
 		return nil, err
 	}

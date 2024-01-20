@@ -43,6 +43,7 @@ func Init() {
 		{
 			usersCtl := controllers.UsersController{}
 			users.GET("/role", usersCtl.Role)
+			users.POST("/notice_token", usersCtl.NoticeToken)
 		}
 	}
 
