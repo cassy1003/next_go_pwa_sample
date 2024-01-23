@@ -39,13 +39,17 @@ export default function GeneralLayout({
         </AppBar>
       </ThemeProvider>
 
-      <Box>{children}</Box>
+      <Box sx={{ mt: 10 }}>
+        <Notification />
+      </Box>
+
+      <Box>
+        {children}
+      </Box>
 
       <ThemeProvider theme={theme}>
         <BottomNavi />
       </ThemeProvider>
-
-      <Notification />
     </Box>
   )
 }

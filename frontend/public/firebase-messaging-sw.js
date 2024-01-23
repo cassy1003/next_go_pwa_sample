@@ -5,7 +5,6 @@ self.addEventListener('push', function (event) {
   if (event.data) {
     data = event.data.json()
   }
-  console.log(data)
   var title = data?.notification?.title || '無題'
   var message = data?.notification?.body || 'メッセージが届いています。'
   event.waitUntil(

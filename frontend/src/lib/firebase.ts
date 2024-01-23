@@ -37,8 +37,6 @@ export const requestForToken = (messaging: Messaging) => {
     .then((currentToken) => {
       if (currentToken) {
         // トークンの取得に成功した場合の処理
-        console.log('Current token:', currentToken)
-
         const apiDomain = API_DOMAIN ?? 'http://' + location.hostname + ':8080'
         const token = getCookie('token')
 
@@ -48,11 +46,11 @@ export const requestForToken = (messaging: Messaging) => {
             'Content-Type': 'application/json'
           },
           method: 'POST',
-          body: JSON.stringify({token: currentToken}) //new FormData({token: currentToken})
+          body: JSON.stringify({token: currentToken})
         })
       } else {
         // トークンの取得に失敗した場合の処理
-        console.log('No registration token available.')
+        console.error('No registration token available.')
       }
     })
     .catch((error) => {
@@ -64,7 +62,6 @@ export const requestForToken = (messaging: Messaging) => {
 export const onMessageListener = (messaging: Messaging): Promise<MessagePayload> => {
   return new Promise<MessagePayload>((resolve) => {
     onMessage(messaging, (payload: MessagePayload) => {
-      console.log('payload', payload)
       resolve(payload)
     })
   })
